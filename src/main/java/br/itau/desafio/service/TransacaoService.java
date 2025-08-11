@@ -2,6 +2,8 @@ package br.itau.desafio.service;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,8 +22,8 @@ public class TransacaoService {
     
     public TransacaoDTO adicionarTransacao(TransacaoDTO transacaoDto) throws Exception{
         if (transacaoDto.valor() == null || transacaoDto.valor().compareTo(BigDecimal.ZERO) <= 0) {
-    throw new UnprocessableEntityException("Valor inválido para transação");
-}
+            throw new UnprocessableEntityException("Valor inválido para transação");
+        }
 
 
         if (transacaoDto.dataHora().isAfter(OffsetDateTime.now())) {
@@ -32,5 +34,14 @@ public class TransacaoService {
         transacao = transacaoRepository.adicionar(transacao);
         return new TransacaoDTO(transacao.getValor(),transacao.getDataHora());
 
+    }
+
+    public List<Transacao> listarTransacoes() {
+        var transacoes = transacaoRepository.listar();
+        return transacoes;
+    }
+
+    public void deletarTransacoes(){
+        transacaoRepository.deletar();
     }
 }

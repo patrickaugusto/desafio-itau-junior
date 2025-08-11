@@ -1,6 +1,8 @@
 package br.itau.desafio.repository;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Repository;
@@ -17,6 +19,14 @@ public class TransacaoRepository {
         transacao.setId(sequencia++);
         transacoes.put(transacao.getId(), transacao);
         return transacao;
+    }
+
+    public List<Transacao> listar() {
+        return new ArrayList<>(transacoes.values());
+    }
+
+    public void deletar(){
+        transacoes.clear(); 
     }
 
 }
