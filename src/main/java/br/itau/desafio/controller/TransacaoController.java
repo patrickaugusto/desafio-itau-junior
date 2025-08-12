@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.itau.desafio.dto.EstatisticaDTO;
 import br.itau.desafio.dto.TransacaoDTO;
 import br.itau.desafio.service.TransacaoService;
 
@@ -28,15 +30,17 @@ public class TransacaoController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping
-    public ResponseEntity<?> listarTransacao(){
-        return ResponseEntity.status(HttpStatus.OK).body(transacaoService.listarTransacoes());
-    }
-
     @DeleteMapping
     public ResponseEntity<?> deletarTransacoes(){
         transacaoService.deletarTransacoes();
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
+    @GetMapping("/estatistica")
+    public ResponseEntity<?> verificarEstatisticas(@RequestParam(defaultValue = "60") Integer segundos) {
+
+    EstatisticaDTO estatisticas = transacaoService.estatisticasUltimosSegundos(segundos);
+    return ResponseEntity.status(HttpStatus.OK).body(estatisticas);
+}
 
 }

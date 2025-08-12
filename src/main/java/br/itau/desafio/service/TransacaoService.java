@@ -2,12 +2,12 @@ package br.itau.desafio.service;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.itau.desafio.dto.EstatisticaDTO;
 import br.itau.desafio.dto.TransacaoDTO;
 import br.itau.desafio.exception.BadRequestException;
 import br.itau.desafio.exception.UnprocessableEntityException;
@@ -42,6 +42,28 @@ public class TransacaoService {
     }
 
     public void deletarTransacoes(){
-        transacaoRepository.deletar();
+        transacaoRepository.deletar();;
+    }
+
+    public EstatisticaDTO estatisticasUltimosSegundos(Integer segundos) {
+        OffsetDateTime agora = OffsetDateTime.now();
+        OffsetDateTime limite = agora.minusSeconds(segundos);
+
+        var stats = listarTransacoes().stream()
+            .filter(t -> t.getDataHora().isAfter(limite))
+            .mapToDouble(t -> t.getValor().doubleValue())
+            .summaryStatistics();
+        
+        if (stats.getCount() == 0) {
+            return new EstatisticaDTO(0, 0.0, 0.0, 0.0, 0.0);
+        }
+
+        return new EstatisticaDTO(
+                stats.getCount(),
+                stats.getSum(),
+                stats.getAverage(),
+                stats.getMin(),
+                stats.getMax()
+        );
     }
 }
